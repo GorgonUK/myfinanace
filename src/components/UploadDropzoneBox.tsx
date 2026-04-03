@@ -1,53 +1,42 @@
-import { styled } from '@mui/material/styles';
-import { MyFinTheme } from '../theme';
+import type { ReactNode } from 'react';
+import { cn } from '@/common/shadcn/lib/utils';
 
-interface DropzoneBoxProps {
-  theme?: MyFinTheme;
+type Props = {
+  children?: ReactNode;
   isFocused?: boolean;
   isDragAccept?: boolean;
   isDragReject?: boolean;
-}
+  className?: string;
+};
 
-const UploadDropzoneBox = styled('div')<DropzoneBoxProps>(({
-  theme,
+const UploadDropzoneBox = ({
   isFocused,
   isDragAccept,
   isDragReject,
-}) => {
-  const getColor = () => {
-    if (isDragAccept) {
-      return theme.palette.primary.main;
-    }
-    if (isDragReject) {
-      return theme.palette.error.light;
-    }
-    if (isFocused) {
-      return theme.palette.primary.main;
-    }
-    return theme.palette.background.default;
-  };
+  children,
+  className,
+  ...rest
+}: Props & React.HTMLAttributes<HTMLDivElement>) => {
+  const borderClass = isDragAccept
+    ? 'border-primary'
+    : isDragReject
+      ? 'border-destructive'
+      : isFocused
+        ? 'border-primary'
+        : 'border-border';
 
-  return {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: theme.spacing(2.5), // 20px equivalent
-    borderWidth: 2,
-    borderRadius: 2,
-    borderColor: getColor(),
-    borderStyle: 'dashed',
-    backgroundColor: theme.palette.background.paper,
-    color: theme.palette.text.disabled,
-    outline: 'none',
-    transition: 'border 0.24s ease-in-out',
-    cursor: 'pointer',
-    '&:hover': {
-      // You can add hover effects here if needed
-      backgroundColor: theme.palette.background.default,
-      transition: 'background 0.24s ease-in-out',
-    },
-  };
-});
+  return (
+    <div
+      className={cn(
+        'flex flex-1 cursor-pointer flex-col items-center rounded-lg border-2 border-dashed bg-card p-6 text-muted-foreground outline-none transition-[border,background] duration-200 hover:bg-muted/50',
+        borderClass,
+        className,
+      )}
+      {...rest}
+    >
+      {children}
+    </div>
+  );
+};
 
 export default UploadDropzoneBox;

@@ -1,25 +1,19 @@
-import { Transaction, TransactionType } from '../services/trx/trxServices.ts';
+import { Transaction, TransactionType } from '@/common/api/trx';
 import { useTranslation } from 'react-i18next';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from '@mui/material';
-import Paper from '@mui/material/Paper';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/common/shadcn/ui/dialog.tsx';
+import { Button } from '@/common/shadcn/ui/button.tsx';
 import {
   getDayNumberFromUnixTimestamp,
   getFullYearFromUnixTimestamp,
   getMonthShortStringFromUnixTimestamp,
 } from '../utils/dateUtils.ts';
-import { useGetTransactionsForCategoryInMonth } from '../services/trx/trxHooks.ts';
+import { useGetTransactionsForCategoryInMonth } from '@/hooks/trx';
 import { useEffect, useState } from 'react';
 import { useLoading } from '../providers/LoadingProvider.tsx';
 import { AlertSeverity, useSnackbar } from '../providers/SnackbarProvider.tsx';
@@ -56,7 +50,6 @@ function TransactionsTableDialog(props: Props) {
     t('common.amount'),
   ];
 
-  // Loading
   useEffect(() => {
     if (getTransactionsForCategoryInMonthRequest.isFetching) {
       loader.showLoading();
@@ -65,7 +58,6 @@ function TransactionsTableDialog(props: Props) {
     }
   }, [getTransactionsForCategoryInMonthRequest.isFetching]);
 
-  // Error
   useEffect(() => {
     if (getTransactionsForCategoryInMonthRequest.isError) {
       snackbar.showSnackbar(
@@ -75,7 +67,6 @@ function TransactionsTableDialog(props: Props) {
     }
   }, [getTransactionsForCategoryInMonthRequest.isError]);
 
-  // Success
   useEffect(() => {
     if (getTransactionsForCategoryInMonthRequest.data) {
       setTrxList(getTransactionsForCategoryInMonthRequest.data);
@@ -94,45 +85,55 @@ function TransactionsTableDialog(props: Props) {
   return (
     <Dialog
       open={props.isOpen}
-      onClose={handleOnClose}
-      fullWidth={true}
-      maxWidth="lg"
+      onOpenChange={(open) => !open && handleOnClose()}
     >
-      <DialogTitle>{props.title}</DialogTitle>
-      <DialogContent>
-        <TableContainer component={Paper}>
-          <Table sx={{ minHeight: 300 }}>
-            <TableHead>
-              <TableRow>
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{props.title}</DialogTitle>
+        </DialogHeader>
+        <div className="rounded-md border">
+          <table className="w-full min-h-[300px] text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
                 {headers.map((item: string) => (
-                  <TableCell key={encodeURI(item)}>{item}</TableCell>
+                  <th
+                    key={encodeURI(item)}
+                    className="px-3 py-2 text-left font-medium"
+                  >
+                    {item}
+                  </th>
                 ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
+              </tr>
+            </thead>
+            <tbody>
               {trxList.map((item: Transaction) => (
-                <TableRow key={encodeURI(item.transaction_id + '')}>
-                  <TableCell>{`${getDayNumberFromUnixTimestamp(item.date_timestamp || 0)}/${getMonthShortStringFromUnixTimestamp(item.date_timestamp || 0)}/${getFullYearFromUnixTimestamp(item.date_timestamp || 0)}`}</TableCell>
-                  <TableCell>{item.description}</TableCell>
-                  <TableCell>
+                <tr
+                  key={encodeURI(item.transaction_id + '')}
+                  className="border-b last:border-0"
+                >
+                  <td className="px-3 py-2 align-top">
+                    {`${getDayNumberFromUnixTimestamp(item.date_timestamp || 0)}/${getMonthShortStringFromUnixTimestamp(item.date_timestamp || 0)}/${getFullYearFromUnixTimestamp(item.date_timestamp || 0)}`}
+                  </td>
+                  <td className="px-3 py-2 align-top">{item.description}</td>
+                  <td className="px-3 py-2 align-top">
                     {item.account_from_name
                       ? item.account_from_name
                       : item.account_to_name}
-                  </TableCell>
-                  <TableCell>
+                  </td>
+                  <td className="px-3 py-2 align-top">
                     {formatNumberAsCurrency.invoke(item.amount)}
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            </tbody>
+          </table>
+        </div>
+        <DialogFooter>
+          <Button type="button" onClick={handleOnClose}>
+            {t('common.goBack')}
+          </Button>
+        </DialogFooter>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleOnClose} autoFocus>
-          {t('common.goBack')}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }

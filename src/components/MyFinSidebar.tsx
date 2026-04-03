@@ -2,21 +2,23 @@ import { useState } from 'react';
 import { Menu, MenuItem, Sidebar, SubMenu } from 'react-pro-sidebar';
 import { NavLink } from 'react-router-dom';
 import {
-  AccountBalanceWalletOutlined,
-  BookmarksOutlined,
-  BusinessOutlined,
-  DashboardOutlined,
-  DisplaySettingsOutlined,
-  DonutLargeOutlined,
-  FolderSharedOutlined,
-  InsertChartOutlined,
-  LocalOfferOutlined,
-  MenuOutlined,
-  PaymentsOutlined,
-  TipsAndUpdatesOutlined,
-  TrackChangesOutlined,
-} from '@mui/icons-material';
-import { alpha, useMediaQuery, useTheme } from '@mui/material';
+  Bookmark,
+  Building2,
+  CreditCard,
+  Donut,
+  FolderOpen,
+  LayoutDashboard,
+  Lightbulb,
+  LineChart,
+  Menu as MenuIcon,
+  SlidersHorizontal,
+  Tag,
+  Target,
+  Wallet,
+} from 'lucide-react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useAppTheme } from '@/theme';
+import { colorAlpha } from '@/utils/colorAlpha';
 import { useTranslation } from 'react-i18next';
 import {
   ROUTE_ACCOUNTS,
@@ -33,7 +35,7 @@ import {
 } from '../providers/RoutesProvider';
 
 const MyFinSidebar = () => {
-  const theme = useTheme();
+  const theme = useAppTheme();
   const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [isCollapsed, setCollapsed] = useState(matchesMdScreen);
   const { t } = useTranslation();
@@ -59,19 +61,19 @@ const MyFinSidebar = () => {
                 backgroundColor: theme.palette.background.default,
               },
               '&:hover': {
-                backgroundColor: alpha(theme.palette.background.default, 0.3),
+                backgroundColor: colorAlpha(theme.palette.background.default, 0.3),
               },
             },
             subMenuContent: {
               backgroundColor: 'inherit',
               '&:hover': {
-                backgroundColor: alpha(theme.palette.background.default, 1.0),
+                backgroundColor: colorAlpha(theme.palette.background.default, 1.0),
               },
             },
           }}
         >
           <MenuItem
-            icon={<MenuOutlined />}
+            icon={<MenuIcon className="size-5" strokeWidth={1.75} />}
             onClick={() => {
               toggleSidebarCollapse();
             }}
@@ -89,7 +91,7 @@ const MyFinSidebar = () => {
             />
           </MenuItem>
           <MenuItem
-            icon={<DashboardOutlined />}
+            icon={<LayoutDashboard className="size-5" strokeWidth={1.75} />}
             component={<NavLink to={ROUTE_DASHBOARD} />}
             style={{ marginTop: 35 }}
           >
@@ -97,64 +99,67 @@ const MyFinSidebar = () => {
             {t('sidebar.dashboard')}
           </MenuItem>
           <MenuItem
-            icon={<PaymentsOutlined />}
+            icon={<CreditCard className="size-5" strokeWidth={1.75} />}
             component={<NavLink to={ROUTE_TRX} />}
           >
             {' '}
             {t('sidebar.transactions')}
           </MenuItem>
           <MenuItem
-            icon={<BookmarksOutlined />}
+            icon={<Bookmark className="size-5" strokeWidth={1.75} />}
             component={<NavLink to={ROUTE_BUDGETS} />}
           >
             {' '}
             {t('sidebar.budgets')}
           </MenuItem>
           <MenuItem
-            icon={<AccountBalanceWalletOutlined />}
+            icon={<Wallet className="size-5" strokeWidth={1.75} />}
             component={<NavLink to={ROUTE_ACCOUNTS} />}
           >
             {' '}
             {t('sidebar.accounts')}
           </MenuItem>
           <MenuItem
-            icon={<DonutLargeOutlined />}
+            icon={<Donut className="size-5" strokeWidth={1.75} />}
             component={<NavLink to={ROUTE_INVEST} />}
           >
             {' '}
             {t('sidebar.investments')}
           </MenuItem>
           <MenuItem
-            icon={<TrackChangesOutlined />}
+            icon={<Target className="size-5" strokeWidth={1.75} />}
             component={<NavLink to={ROUTE_GOALS} />}
           >
             {' '}
             {t('sidebar.goals')}
           </MenuItem>
-          <SubMenu label={t('sidebar.meta')} icon={<DisplaySettingsOutlined />}>
+          <SubMenu
+            label={t('sidebar.meta')}
+            icon={<SlidersHorizontal className="size-5" strokeWidth={1.75} />}
+          >
             <MenuItem
-              icon={<FolderSharedOutlined />}
+              icon={<FolderOpen className="size-5" strokeWidth={1.75} />}
               component={<NavLink to={ROUTE_CATEGORIES} />}
             >
               {' '}
               {t('sidebar.categories')}
             </MenuItem>
             <MenuItem
-              icon={<BusinessOutlined />}
+              icon={<Building2 className="size-5" strokeWidth={1.75} />}
               component={<NavLink to={ROUTE_ENTITIES} />}
             >
               {' '}
               {t('sidebar.entities')}
             </MenuItem>
             <MenuItem
-              icon={<LocalOfferOutlined />}
+              icon={<Tag className="size-5" strokeWidth={1.75} />}
               component={<NavLink to={ROUTE_TAGS} />}
             >
               {' '}
               {t('sidebar.tags')}
             </MenuItem>
             <MenuItem
-              icon={<TipsAndUpdatesOutlined />}
+              icon={<Lightbulb className="size-5" strokeWidth={1.75} />}
               component={<NavLink to={ROUTE_RULES} />}
             >
               {' '}
@@ -162,7 +167,7 @@ const MyFinSidebar = () => {
             </MenuItem>
           </SubMenu>
           <MenuItem
-            icon={<InsertChartOutlined />}
+            icon={<LineChart className="size-5" strokeWidth={1.75} />}
             component={<NavLink to={ROUTE_STATS} />}
           >
             {' '}

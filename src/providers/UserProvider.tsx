@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import localStore, { CachedTransaction } from '../data/localStore.ts';
-import { Account, UserSession } from '../services/auth/authServices.ts';
+import localStore, { CachedTransaction } from '@/common/data/localStore.ts';
+import { Account, UserSession } from '@/common/api/auth';
 
 export const useUserData = () => {
   return useContext(UserContext);

@@ -1,10 +1,13 @@
-import Dialog from '@mui/material/Dialog';
 import { useTranslation } from 'react-i18next';
-import Button from '@mui/material/Button';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/common/shadcn/ui/dialog.tsx';
+import { Button } from '@/common/shadcn/ui/button.tsx';
 
 interface Props {
   isOpen: boolean;
@@ -27,7 +30,7 @@ function ConfirmationDialog(props: Props) {
     alert: t('transactions.deleteTransactionModalAlert'),
   };
 
-  props = { ...defaultProps, ...props };
+  const merged = { ...defaultProps, ...props };
   const {
     isOpen,
     onClose,
@@ -38,24 +41,30 @@ function ConfirmationDialog(props: Props) {
     alert,
     onNegativeClick,
     onPositiveClick,
-  } = props;
+  } = merged;
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
-        <DialogContentText>
-          <span>{description}</span>
-          <br />
-          <strong>{alert}</strong>
-        </DialogContentText>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription asChild>
+            <div>
+              <span>{description}</span>
+              <br />
+              <strong>{alert}</strong>
+            </div>
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={onNegativeClick}>
+            {negativeText}
+          </Button>
+          <Button type="button" onClick={onPositiveClick} autoFocus>
+            {positiveText}
+          </Button>
+        </DialogFooter>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onNegativeClick}>{negativeText}</Button>
-        <Button onClick={onPositiveClick} autoFocus>
-          {positiveText}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }

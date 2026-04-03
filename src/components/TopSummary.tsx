@@ -1,5 +1,4 @@
-import { Box, Stack, Typography, useTheme } from '@mui/material';
-import { useGetTopSummaryValues } from '../services/user/userHooks.ts';
+import { useGetTopSummaryValues } from '@/hooks/user';
 import { useTranslation } from 'react-i18next';
 import { useFormatNumberAsCurrency } from '../utils/textHooks.ts';
 
@@ -10,32 +9,26 @@ const TopSummary = () => {
   const formatNumberAsCurrency = useFormatNumberAsCurrency();
 
   return (
-    <Stack
-      direction="row"
-      spacing={2}
-      sx={{
-        display: { xs: 'none', sm: 'none', md: 'flex' }, // Hide on screens smaller than 'md'
-      }}
-    >
-      <Stack direction="column">
+    <div className="hidden flex-row gap-4 md:flex">
+      <div className="flex flex-col gap-0.5">
         <TopSummaryLabel value={t('topBar.operatingFunds')} />
         <TopSummaryAmount
           value={formatNumberAsCurrency.invoke(operatingFundsSum)}
         />
-      </Stack>
-      <Stack direction="column">
+      </div>
+      <div className="flex flex-col gap-0.5">
         <TopSummaryLabel value={t('topBar.investing')} />
         <TopSummaryAmount value={formatNumberAsCurrency.invoke(investingSum)} />
-      </Stack>
-      <Stack direction="column">
+      </div>
+      <div className="flex flex-col gap-0.5">
         <TopSummaryLabel value={t('topBar.debt')} />
         <TopSummaryAmount value={formatNumberAsCurrency.invoke(debtSum)} />
-      </Stack>
-      <Stack direction="column">
+      </div>
+      <div className="flex flex-col gap-0.5">
         <TopSummaryLabel value={t('topBar.netWorth')} />
         <TopSummaryAmount value={formatNumberAsCurrency.invoke(netWorthSum)} />
-      </Stack>
-    </Stack>
+      </div>
+    </div>
   );
 };
 
@@ -44,20 +37,14 @@ type TopSummaryLabelValueProps = {
 };
 
 const TopSummaryLabel = (props: TopSummaryLabelValueProps) => {
-  return <Typography variant="caption">{props.value}</Typography>;
+  return <span className="text-muted-foreground text-xs">{props.value}</span>;
 };
 
 const TopSummaryAmount = (props: TopSummaryLabelValueProps) => {
-  const theme = useTheme();
   return (
-    <Box
-      bgcolor={theme.palette.background.paper}
-      sx={{ borderRadius: 2, display: 'inline-flex', width: 'fit-content' }}
-    >
-      <Typography p={1} variant="caption">
-        {props.value}
-      </Typography>
-    </Box>
+    <div className="bg-card inline-flex w-fit rounded-lg border border-border">
+      <span className="p-2 text-xs">{props.value}</span>
+    </div>
   );
 };
 

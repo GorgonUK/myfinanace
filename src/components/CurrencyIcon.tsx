@@ -1,5 +1,5 @@
 import { useUserData } from '../providers/UserProvider.tsx';
-import { CURRENCIES } from '../consts/Currency.ts';
+import { CURRENCIES } from '@/config/Currency.ts';
 import {
   AttachMoney,
   CurrencyPound,

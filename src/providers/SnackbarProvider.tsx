@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode, useState } from 'react';
-import { AlertColor } from '@mui/material/Alert';
 import MyFinSnackbar from '../components/MyFinSnackbar';
+import type { SnackbarSeverity } from '../components/MyFinSnackbar';
 
 export enum AlertSeverity {
   ERROR = 'error',
@@ -26,13 +26,17 @@ export const useSnackbar = () => {
 export const SnackbarProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [severity, setSeverity] = useState<AlertColor>('info');
-  const [duration, setDuration] = useState();
+  const [severity, setSeverity] = useState<SnackbarSeverity>('info');
+  const [duration, setDuration] = useState<number | undefined>();
 
-  const showSnackbar = (message: string, severity: AlertColor) => {
+  const showSnackbar = (
+    message: string,
+    severity: AlertSeverity,
+    nextDuration?: number,
+  ) => {
     setMessage(message);
     setSeverity(severity);
-    setDuration(duration);
+    setDuration(nextDuration);
     setOpen(true);
   };
 

@@ -1,15 +1,17 @@
-import { Backdrop, CircularProgress } from '@mui/material';
+import { Loader2 } from 'lucide-react';
 import { useLoading } from '../providers/LoadingProvider';
 
 const BackdropLoading = () => {
   const { isLoading } = useLoading();
+  if (!isLoading) return null;
   return (
-    <Backdrop
-      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.modal + 1 }}
-      open={isLoading}
+    <div
+      className="fixed inset-0 z-[1300] flex items-center justify-center bg-black/50 text-primary-foreground"
+      aria-busy="true"
+      aria-live="polite"
     >
-      <CircularProgress color="inherit" />
-    </Backdrop>
+      <Loader2 className="size-10 animate-spin text-white" />
+    </div>
   );
 };
 

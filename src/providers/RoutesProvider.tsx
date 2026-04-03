@@ -1,22 +1,26 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
-import Login from '../features/auth/Login.tsx';
-import PrivateRoute from '../components/PrivateRoute.tsx';
-import Dashboard from '../features/dashboard/Dashboard.tsx';
-import Profile from '../features/profile/Profile.tsx';
-import Transactions from '../features/transactions/Transactions.tsx';
-import BudgetList from '../features/budgets/list/BudgetList.tsx';
-import BudgetDetails from '../features/budgets/details/BudgetDetails.tsx';
-import Accounts from '../features/accounts/Accounts.tsx';
-import Categories from '../features/categories/Categories.tsx';
-import Entities from '../features/entities/Entities.tsx';
-import Tags from '../features/tags/Tags.tsx';
-import ImportTransactions from '../features/transactions/import/ImportTransactions.tsx';
-import Rules from '../features/rules/Rules.tsx';
-import Invest, { InvestTab } from '../features/invest/Invest.tsx';
-import Stats, { StatTab } from '../features/stats/Stats.tsx';
-import RecoverPassword from '../features/auth/RecoverPassword.tsx';
-import Setup from '../features/setup/Setup.tsx';
-import Goals from '../features/goals/Goals.tsx';
+import PrivateRoute from '@/components/PrivateRoute.tsx';
+import {
+  AccountsPage,
+  BudgetDetailsPage,
+  BudgetListPage,
+  CategoriesPage,
+  DashboardPage,
+  EntitiesPage,
+  GoalsPage,
+  ImportTransactionsPage,
+  InvestPage,
+  InvestTab,
+  LoginPage,
+  ProfilePage,
+  RecoverPasswordPage,
+  RulesPage,
+  SetupPage,
+  StatsPage,
+  StatTab,
+  TagsPage,
+  TransactionsPage,
+} from '@/pages/index.ts';
 
 export const ROUTE_AUTH = '/auth';
 export const ROUTE_RECOVER_PASSWORD = '/recover-password';
@@ -50,61 +54,63 @@ const RoutesProvider = () => {
   return (
     <HashRouter>
       <Routes>
-        <Route path={ROUTE_AUTH} element={<Login />} />
-        <Route path={ROUTE_RECOVER_PASSWORD} element={<RecoverPassword />} />
-        <Route path={ROUTE_SETUP} element={<Setup />} />
+        <Route path={ROUTE_AUTH} element={<LoginPage />} />
+        <Route
+          path={ROUTE_RECOVER_PASSWORD}
+          element={<RecoverPasswordPage />}
+        />
+        <Route path={ROUTE_SETUP} element={<SetupPage />} />
         <Route element={<PrivateRoute />}>
-          {/* Private authenticated routes */}
-          <Route path={ROUTE_DASHBOARD} element={<Dashboard />} />
-          <Route path={ROUTE_PROFILE} element={<Profile />} />
-          <Route path={ROUTE_TRX} element={<Transactions />} />
-          <Route path={ROUTE_BUDGETS} element={<BudgetList />} />
-          <Route path={ROUTE_BUDGET_DETAILS} element={<BudgetDetails />} />
-          <Route path={ROUTE_BUDGET_NEW} element={<BudgetDetails />} />
-          <Route path={ROUTE_ACCOUNTS} element={<Accounts />} />
-          <Route path={ROUTE_CATEGORIES} element={<Categories />} />
-          <Route path={ROUTE_ENTITIES} element={<Entities />} />
-          <Route path={ROUTE_TAGS} element={<Tags />} />
-          <Route path={ROUTE_IMPORT_TRX} element={<ImportTransactions />} />
-          <Route path={ROUTE_RULES} element={<Rules />} />
-          <Route path={ROUTE_GOALS} element={<Goals />} />
-          <Route path={ROUTE_INVEST} element={<Invest />} />
+          <Route path={ROUTE_DASHBOARD} element={<DashboardPage />} />
+          <Route path={ROUTE_PROFILE} element={<ProfilePage />} />
+          <Route path={ROUTE_TRX} element={<TransactionsPage />} />
+          <Route path={ROUTE_BUDGETS} element={<BudgetListPage />} />
+          <Route path={ROUTE_BUDGET_DETAILS} element={<BudgetDetailsPage />} />
+          <Route path={ROUTE_BUDGET_NEW} element={<BudgetDetailsPage />} />
+          <Route path={ROUTE_ACCOUNTS} element={<AccountsPage />} />
+          <Route path={ROUTE_CATEGORIES} element={<CategoriesPage />} />
+          <Route path={ROUTE_ENTITIES} element={<EntitiesPage />} />
+          <Route path={ROUTE_TAGS} element={<TagsPage />} />
+          <Route path={ROUTE_IMPORT_TRX} element={<ImportTransactionsPage />} />
+          <Route path={ROUTE_RULES} element={<RulesPage />} />
+          <Route path={ROUTE_GOALS} element={<GoalsPage />} />
+          <Route path={ROUTE_INVEST} element={<InvestPage />} />
           <Route
             path={ROUTE_INVEST_DASHBOARD}
-            element={<Invest defaultTab={InvestTab.Summary} />}
+            element={<InvestPage defaultTab={InvestTab.Summary} />}
           />
           <Route
             path={ROUTE_INVEST_ASSETS}
-            element={<Invest defaultTab={InvestTab.Assets} />}
+            element={<InvestPage defaultTab={InvestTab.Assets} />}
           />
           <Route
             path={ROUTE_INVEST_TRANSACTIONS}
-            element={<Invest defaultTab={InvestTab.Transactions} />}
+            element={<InvestPage defaultTab={InvestTab.Transactions} />}
           />
           <Route
             path={ROUTE_INVEST_STATS}
-            element={<Invest defaultTab={InvestTab.Reports} />}
+            element={<InvestPage defaultTab={InvestTab.Reports} />}
           />
-          <Route path={ROUTE_STATS} element={<Stats />} />
+          <Route path={ROUTE_STATS} element={<StatsPage />} />
           <Route
             path={ROUTE_STATS_PATRIMONY_EVO}
-            element={<Stats defaultTab={StatTab.PatrimonyEvolution} />}
+            element={<StatsPage defaultTab={StatTab.PatrimonyEvolution} />}
           />
           <Route
             path={ROUTE_STATS_PROJECTIONS}
-            element={<Stats defaultTab={StatTab.Projections} />}
+            element={<StatsPage defaultTab={StatTab.Projections} />}
           />
           <Route
             path={ROUTE_STATS_EXPENSES}
-            element={<Stats defaultTab={StatTab.Expenses} />}
+            element={<StatsPage defaultTab={StatTab.Expenses} />}
           />
           <Route
             path={ROUTE_STATS_INCOME}
-            element={<Stats defaultTab={StatTab.Income} />}
+            element={<StatsPage defaultTab={StatTab.Income} />}
           />
           <Route
             path={ROUTE_STATS_YEAR_BY_YEAR}
-            element={<Stats defaultTab={StatTab.YearByYear} />}
+            element={<StatsPage defaultTab={StatTab.YearByYear} />}
           />
           <Route path="*" element={<Navigate to="/auth" replace />} />
         </Route>

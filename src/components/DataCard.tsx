@@ -1,26 +1,22 @@
-import { ReactNode } from 'react';
-import { useTheme, Theme, SxProps } from '@mui/material';
-import Box from '@mui/material/Box';
+import { type ReactNode } from 'react';
+import { cn } from '@/common/shadcn/lib/utils';
 
 const DataCard = ({
   children,
-  sx,
+  className,
 }: {
   children: ReactNode;
-  sx?: SxProps<Theme> | undefined;
+  className?: string;
 }) => {
-  const theme = useTheme();
-
   return (
-    <Box
-      borderRadius={1}
-      sx={{
-        ...{ p: theme.spacing(2), background: theme.palette.background.paper },
-        ...sx,
-      }}
+    <div
+      className={cn(
+        'bg-card rounded-md border border-border p-4 shadow-sm',
+        className,
+      )}
     >
       {children}
-    </Box>
+    </div>
   );
 };
 

@@ -1,8 +1,9 @@
-import Paper from '@mui/material/Paper';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useAppTheme } from '@/theme';
 import { LineSvgProps, ResponsiveLine } from '@nivo/line';
-import { useMediaQuery, useTheme } from '@mui/material';
+import { useMemo } from 'react';
 import { useFormatNumberAsCurrency } from '../utils/textHooks.ts';
-import Stack from '@mui/material/Stack';
+import EmptyView from './EmptyView.tsx';
 
 type ChartDataItem = {
   id: string;
@@ -18,20 +19,40 @@ type Props = {
 };
 
 const MyFinLineChart = (props: Props) => {
-  const theme = useTheme();
-  const matchesMdScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const theme = useAppTheme();
+  const matchesMdScreen = useMediaQuery('(max-width: 900px)');
   const formatNumberAsCurrency = useFormatNumberAsCurrency();
+
+  const sanitizedData = useMemo(() => {
+    return props.chartData.map((series) => ({
+      ...series,
+      data: series.data.map((point) => ({
+        ...point,
+        y:
+          typeof point.y === 'number' && Number.isFinite(point.y) ? point.y : 0,
+      })),
+    }));
+  }, [props.chartData]);
+
+  const hasPoints = sanitizedData.some((s) => s.data.length > 0);
+  if (!hasPoints) {
+    return (
+      <div className="flex h-full min-h-[240px] items-center justify-center">
+        <EmptyView />
+      </div>
+    );
+  }
 
   return (
     <ResponsiveLine
-      data={props.chartData as unknown as readonly never[]}
+      data={sanitizedData as unknown as readonly never[]}
       margin={{ top: 5, right: 5, bottom: 50, left: 50 }}
       xScale={{ type: 'point' }}
       yScale={{
         type: 'linear',
         min: 'auto',
         max: 'auto',
-        stacked: true,
+        stacked: false,
         reverse: false,
       }}
       yFormat=" >-.2f"
@@ -61,16 +82,8 @@ const MyFinLineChart = (props: Props) => {
       useMesh={true}
       colors={() => theme.palette.primary.main}
       tooltip={(item) => (
-        <Paper
-          sx={{
-            width: 'max-content',
-            fontSize: '12px',
-            background: 'white',
-            color: 'black',
-            p: theme.spacing(1),
-          }}
-        >
-          <Stack>
+        <div className="w-max bg-popover p-2 text-xs text-popover-foreground shadow-md">
+          <div>
             {/*@ts-expect-error type error from nivo (?)*/}
             {String(item.point.data.x)}
             <br />
@@ -78,8 +91,8 @@ const MyFinLineChart = (props: Props) => {
               {/*@ts-expect-error type error from nivo (?)*/}
               {formatNumberAsCurrency.invoke(Number(item.point.data.y))}
             </strong>
-          </Stack>
-        </Paper>
+          </div>
+        </div>
       )}
       theme={theme.nivo}
       {...props.customLineProps}

@@ -1,8 +1,5 @@
-import { useTheme } from '@mui/material';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
+import { Badge } from '@/common/shadcn/ui/badge.tsx';
+import { cn } from '@/common/shadcn/lib/utils';
 
 type Props = {
   title: string;
@@ -11,33 +8,27 @@ type Props = {
 };
 
 const PageHeader = (props: Props) => {
-  const theme = useTheme();
   return (
-    <Box mb="30px">
-      <Stack direction="row" alignItems="center" spacing={1}>
-        <Typography
-          variant="h6"
-          color={theme.palette.text.primary}
-          fontWeight="bold"
-          sx={{ m: '0 0 5px 0' }}
-        >
+    <div className="mb-[30px]">
+      <div className="flex flex-row items-center gap-2">
+        <h1 className="text-foreground m-0 mb-[5px] text-lg font-bold">
           {props.title}
-        </Typography>
-        {props.titleChipText && (
-          <Chip
-            label={props.titleChipText}
-            size="small"
-            variant="outlined"
-            color="success"
+        </h1>
+        {props.titleChipText ? (
+          <Badge
+            variant="outline"
+            className={cn(
+              'border-green-600 text-green-700 dark:border-green-500 dark:text-green-400',
+              'text-[0.6rem] font-normal',
+            )}
             aria-label={props.titleChipText}
-            sx={{ fontSize: '0.6rem', }}
-          />
-        )}
-      </Stack>
-      <Typography variant="body1" color={theme.palette.primary.main}>
-        {props.subtitle}
-      </Typography>
-    </Box>
+          >
+            {props.titleChipText}
+          </Badge>
+        ) : null}
+      </div>
+      <p className="text-primary text-base">{props.subtitle}</p>
+    </div>
   );
 };
 

@@ -1,72 +1,65 @@
 import {
   createContext,
-  ReactNode,
+  type ReactNode,
   Suspense,
   useEffect,
   useMemo,
   useState,
 } from 'react';
-import localStore from '../data/localStore.ts';
-import { createTheme, PaletteMode } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from '@mui/material/styles';
-import { generateGlobalTheme } from '../theme';
+import localStore from '@/common/data/localStore.ts';
+import { AppThemeProvider } from '@/theme/ThemeContext.tsx';
+import { generateGlobalTheme } from '@/theme/theme.ts';
+import type { AppPaletteMode } from '@/theme/types.ts';
 import { LoadingProvider } from './LoadingProvider.tsx';
 import { SnackbarProvider } from './SnackbarProvider.tsx';
 import { useTranslation } from 'react-i18next';
 import { en, pt } from 'yup-locales';
 import { setLocale as setYupLocale } from 'yup';
-import * as locales from '@mui/material/locale';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import 'dayjs/locale/pt.js';
 import 'dayjs/locale/en.js';
 import { UserContextProvider } from './UserProvider.tsx';
-
-type SupportedLocales = keyof typeof locales;
+import { Loader2 } from 'lucide-react';
 
 interface ColorModeContextType {
   toggleColorMode: () => void;
-  setColorMode: (mode: PaletteMode) => void;
+  setColorMode: (mode: AppPaletteMode) => void;
 }
 export const ColorModeContext = createContext({} as ColorModeContextType);
 
 const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
-  const [mode, setMode] = useState<PaletteMode>(localStore.getUiMode());
+  const [mode, setMode] = useState<AppPaletteMode>(localStore.getUiMode());
   const colorMode = useMemo(
     () => ({
       toggleColorMode: () => {
         setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
         localStore.toggleUiMode();
       },
-      setColorMode: (mode: PaletteMode) => {
-        setMode(mode);
-        localStore.setUiMode(mode);
+      setColorMode: (next: AppPaletteMode) => {
+        setMode(next);
+        localStore.setUiMode(next);
       },
     }),
-    [mode],
+    [],
   );
 
-  const [locale, setLocale] = useState<SupportedLocales>('ptPT');
-  const [dayJsLocale, setDayJsLocale] = useState<'en' | 'pt'>('pt');
-  const theme = useMemo(
-    () => createTheme(generateGlobalTheme(mode), locales[locale]),
-    [mode, locale],
-  );
+  const theme = useMemo(() => generateGlobalTheme(mode), [mode]);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', mode === 'dark');
+  }, [mode]);
+
   const { i18n } = useTranslation();
 
   function setAppLocale(language: string) {
     switch (language) {
       case 'pt':
-        setLocale('ptPT');
         setYupLocale(pt);
-        setDayJsLocale('pt');
+        dayjs.locale('pt');
         break;
       default:
-        setLocale('enUS');
         setYupLocale(en);
-        setDayJsLocale('en');
+        dayjs.locale('en');
         break;
     }
   }
@@ -85,21 +78,24 @@ const MyFinThemeProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <UserContextProvider>
-        <LocalizationProvider
-          dateAdapter={AdapterDayjs}
-          adapterLocale={dayJsLocale}
-        >
-          <ThemeProvider theme={theme}>
-            <Suspense fallback={<CircularProgress color="inherit" />}>
-              <CssBaseline />
-              <LoadingProvider>
-                <SnackbarProvider>{children}</SnackbarProvider>
-              </LoadingProvider>
-            </Suspense>
-          </ThemeProvider>
-        </LocalizationProvider>
-      </UserContextProvider>
+      <AppThemeProvider theme={theme}>
+        <UserContextProvider>
+          <Suspense
+            fallback={
+              <div className="flex min-h-[40vh] items-center justify-center">
+                <Loader2
+                  className="text-muted-foreground size-8 animate-spin"
+                  aria-hidden
+                />
+              </div>
+            }
+          >
+            <LoadingProvider>
+              <SnackbarProvider>{children}</SnackbarProvider>
+            </LoadingProvider>
+          </Suspense>
+        </UserContextProvider>
+      </AppThemeProvider>
     </ColorModeContext.Provider>
   );
 };

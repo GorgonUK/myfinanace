@@ -1,4 +1,4 @@
-import { ColorGradient } from '../consts';
+import { ColorGradient } from '@/config';
 
 export function createCssGradientObject(
   color1: string,

@@ -8,6 +8,10 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -26,5 +30,6 @@
     "strictNullChecks": true,
   },
   "include": ["src"],
+  "exclude": ["src/components/dashboard/TableExample"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

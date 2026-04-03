@@ -1,0 +1,187 @@
+import { useLoading } from '../../providers/LoadingProvider.tsx';
+import {
+  AlertSeverity,
+  useSnackbar,
+} from '../../providers/SnackbarProvider.tsx';
+import { useTranslation } from 'react-i18next';
+import { useEffect, useReducer } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/common/shadcn/ui/dialog.tsx';
+import Dropzone from 'react-dropzone';
+import UploadDropzoneBox from '../../components/UploadDropzoneBox.tsx';
+import { useRestoreUserData } from '@/hooks/user';
+import { useLogout } from '@/hooks/auth';
+import { BusinessLogicError } from '@/common/data/customApiError.ts';
+import { RestoreUserErrorCodes } from '@/common/api/user';
+
+type UiState = {
+  isLoading: boolean;
+};
+
+const enum StateActionType {
+  FileUploadSuccess,
+  FileUploadError,
+  RequestStarted,
+  RequestError,
+  RequestSuccess,
+}
+
+type StateAction =
+  | { type: StateActionType.RequestStarted }
+  | { type: StateActionType.RequestError }
+  | { type: StateActionType.RequestSuccess }
+  | { type: StateActionType.FileUploadError }
+  | { type: StateActionType.FileUploadSuccess };
+
+const createInitialState = (): UiState => {
+  return {
+    isLoading: false,
+  };
+};
+
+const reduceState = (prevState: UiState, action: StateAction): UiState => {
+  switch (action.type) {
+    case StateActionType.RequestStarted:
+      return {
+        ...prevState,
+        isLoading: true,
+      };
+    case StateActionType.RequestError:
+      return {
+        ...prevState,
+        isLoading: false,
+      };
+    case StateActionType.RequestSuccess:
+      return {
+        ...prevState,
+        isLoading: false,
+      };
+    case StateActionType.FileUploadError:
+      return {
+        ...prevState,
+        isLoading: false,
+      };
+    case StateActionType.FileUploadSuccess:
+      return {
+        ...prevState,
+        isLoading: false,
+      };
+  }
+};
+
+type Props = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+const RestoreUserDialog = (props: Props) => {
+  const loader = useLoading();
+  const snackbar = useSnackbar();
+  const { t } = useTranslation();
+
+  const [state, dispatch] = useReducer(reduceState, null, createInitialState);
+
+  const logout = useLogout();
+  const restoreUserDataRequest = useRestoreUserData();
+
+  useEffect(() => {
+    if (state.isLoading) {
+      loader.showLoading();
+    } else {
+      loader.hideLoading();
+    }
+  }, [state.isLoading]);
+
+  useEffect(() => {
+    if (restoreUserDataRequest.isError) {
+      dispatch({ type: StateActionType.RequestError });
+      const error = restoreUserDataRequest.error;
+      let errorMessage = t('common.somethingWentWrongTryAgain');
+
+      if (error instanceof BusinessLogicError) {
+        switch (error.rationale) {
+          case RestoreUserErrorCodes.IncompatibleVersions:
+            errorMessage = t('dropZone.uploadIncompatibleVersionError');
+            break;
+        }
+      }
+
+      snackbar.showSnackbar(errorMessage, AlertSeverity.ERROR);
+    }
+  }, [restoreUserDataRequest.isError]);
+
+  useEffect(() => {
+    if (!restoreUserDataRequest.data) return;
+    dispatch({ type: StateActionType.RequestSuccess });
+    snackbar.showSnackbar(
+      t('common.taskSuccessfullyCompleted'),
+      AlertSeverity.SUCCESS,
+    );
+    logout();
+  }, [restoreUserDataRequest.data]);
+
+  const onFilesUploaded = (fileList: File[]) => {
+    if (!fileList || fileList.length < 1) {
+      snackbar.showSnackbar(t('dropZone.uploadFailure'), AlertSeverity.ERROR);
+      return;
+    }
+    const file = fileList[0];
+    const reader = new FileReader();
+
+    reader.onabort = () => console.log('file reading was aborted');
+    reader.onerror = () =>
+      snackbar.showSnackbar(t('dropZone.uploadFailure'), AlertSeverity.ERROR);
+    reader.onload = () => {
+      const content = reader.result?.toString() ?? '';
+      dispatch({ type: StateActionType.RequestStarted });
+      restoreUserDataRequest.mutate(content);
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <Dialog
+      open={props.isOpen}
+      onOpenChange={(open) => !open && props.onClose()}
+    >
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{t('profile.importDataTitle')}</DialogTitle>
+          <DialogDescription>
+            {t('profile.importDataDescription')}:
+          </DialogDescription>
+        </DialogHeader>
+        <Dropzone
+          accept={{ 'application/json': ['.json'] }}
+          onDrop={(fileList) => onFilesUploaded(fileList)}
+          maxFiles={1}
+        >
+          {({
+            getRootProps,
+            getInputProps,
+            isDragAccept,
+            isDragReject,
+            isFocused,
+          }) => (
+            <UploadDropzoneBox
+              {...getRootProps()}
+              isFocused={isFocused}
+              isDragAccept={isDragAccept}
+              isDragReject={isDragReject}
+            >
+              <input {...getInputProps()} />
+              <p>{t('dropZone.uploadText')}</p>
+            </UploadDropzoneBox>
+          )}
+        </Dropzone>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default RestoreUserDialog;

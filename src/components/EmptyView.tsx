@@ -1,27 +1,14 @@
-import { Coffee } from '@mui/icons-material';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
-import { useTheme } from '@mui/material';
+import { Coffee } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const EmptyView = () => {
-  const theme = useTheme();
   const { t } = useTranslation();
 
   return (
-    <Stack
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '-webkit-fill-available',
-      }}
-    >
-      <Coffee style={{ color: theme.palette.text.secondary }} />
-      <Typography variant="body1" color={theme.palette.text.secondary}>
-        {t('common.tableInfoEmpty')}
-      </Typography>
-    </Stack>
+    <div className="flex min-h-[200px] flex-1 flex-col items-center justify-center gap-2 py-8">
+      <Coffee className="size-8 text-muted-foreground" />
+      <p className="text-muted-foreground text-base">{t('common.tableInfoEmpty')}</p>
+    </div>
   );
 };
 

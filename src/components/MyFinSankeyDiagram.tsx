@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material';
+import { useAppTheme } from '@/theme';
 import { ResponsiveSankey } from '@nivo/sankey';
 import { useFormatNumberAsCurrency } from '../utils/textHooks.ts';
 
@@ -23,7 +23,7 @@ type Props = {
 };
 
 const MyFinSankeyDiagram = (props: Props) => {
-  const theme = useTheme();
+  const theme = useAppTheme();
   const formatNumberAsCurrency = useFormatNumberAsCurrency();
 
   return (

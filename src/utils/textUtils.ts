@@ -1,4 +1,4 @@
-import localStore from '../data/localStore.ts';
+import localStore from '@/common/data/localStore.ts';
 
 export const formatStringAsCurrency = (
   text: string,

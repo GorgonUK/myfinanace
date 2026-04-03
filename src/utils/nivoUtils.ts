@@ -1,14 +1,13 @@
-import { PaletteOptions } from '@mui/material/styles';
+import type { AppPalette } from '@/theme/types.ts';
 import { LinearGradientDef } from '@nivo/core';
 import { Theme as NivoTheme } from '@nivo/theming';
-import { ColorGradient } from '../consts';
+import { ColorGradient } from '@/config';
 import { cssGradients } from './gradientUtils.ts';
 
 export function generateNivoTheme(
   _mode: 'light' | 'dark',
-  palette: PaletteOptions,
-): Partial<NivoTheme> {
-  return {
+  palette: AppPalette,
+): Partial<NivoTheme> {  return {
     text: {
       fontSize: 11,
       fill: palette.text?.primary || '',
@@ -211,7 +210,7 @@ export const generateDefsForGradients = () => {
 };
 
 const getRandomColorGradient = (): string => {
-  const gradients = Object.values(ColorGradient);
+  const gradients = Object.values(ColorGradient) as string[];
   return gradients[Math.floor(Math.random() * gradients.length)];
 };
 

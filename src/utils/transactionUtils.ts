@@ -1,4 +1,4 @@
-import { Transaction, TransactionType } from '../services/trx/trxServices.ts';
+import { Transaction, TransactionType } from '@/common/api/trx';
 
 /**
  * Infers and returns the transaction type for the given transaction
