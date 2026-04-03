@@ -52,7 +52,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-md bg-background px-4 py-2 text-base file:bg-transparent file:text-base file:font-medium disabled:cursor-not-allowed disabled:opacity-50",
+          "border border-input flex h-12 w-full rounded-md bg-background px-4 py-2 text-base file:bg-transparent file:text-base file:font-medium disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
         onKeyDown={handleKeyDown}
